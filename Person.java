@@ -25,7 +25,7 @@ public class Person implements Comparable<Person>{
 	}
 
 	public int compareTo(Person otherPerson) {
-		int otherAge = ((Person) otherPerson).getAge(); 
+		int otherAge = otherPerson.getAge(); 
 		//ascending order
 		return this.age - otherAge; 
 	}

@@ -8,7 +8,7 @@
  * operands and the four operators +, -, *, and /. Operators and operands must
  * be separated by whitespace.
  *
- * @author  NN // TODO
+ * @author  Stefan Nilsson &amp; Viktor Kronvall
  * @version 2013-02-01
  */
 public class Postfix {
@@ -21,14 +21,12 @@ public class Postfix {
 	 * @throws      A subclass of RuntimeException if the expression is wrong
 	 */
 	public static int evaluate(String expr) throws RuntimeException {
+		//Remove leading and trailing whitespace.
+		expr = expr.trim();
 		//Split string into tokens.
 		String[] tokens = expr.split("\\s+");
 		LinkedStack<Integer> stack = new LinkedStack<Integer>();
 		for(String token: tokens) {
-			if(token.length() == 0) {
-				//Disregard empty tokens
-				continue;
-			}
 			if(isInteger(token)) {
 				int number = Integer.parseInt(token);
 				stack.push(number);
@@ -50,15 +48,17 @@ public class Postfix {
 					case "/":
 						stack.push(a/b);
 						break;
+					default:
+						throw new RuntimeException("Syntax error: Invalid operator. Failed with expression: ("+expr+")");
 				}
 			}
 			else {
-				throw new RuntimeException("Syntax error.");
+				throw new RuntimeException("Syntax error. Invalid construct. Failed with expression: ("+expr+")");
 			}
 		}
 		int result = stack.pop();
 		if(!stack.isEmpty()) {
-			throw new RuntimeException("Stack not empty on completion.");
+			throw new RuntimeException("Stack not empty on completion. Failed with expression: ("+expr+")");
 		}
 		return result;
 	}
@@ -68,7 +68,7 @@ public class Postfix {
 	 * An operator is one of '+', '-', '*', '/'.
 	 */
 	private static boolean isOperator(String s) {
-		return s.matches("[+\\-*/]");
+		return s.matches("^[+\\-*/]$");
 	}
 	
 	/**
@@ -103,7 +103,7 @@ public class Postfix {
 		assert evaluate("12 34 - 56 -78 + *") == (12 - 34) * (56 + -78);
 		assert evaluate("1 2 + 3 * 4 - 5 /") == (((1 + 2) * 3) - 4) / 5;
 		assert evaluate("2 3 4 -0 + - *") == 2 * (3 - (4 + -0));
-		assert evaluate("  		1 	-2	 + ") == 1 - 2; // tabs and spaces
+		assert evaluate("  		1 		-2	 + ") == 1 - 2; // tabs and spaces
 
 		assert explodes("");
 		assert explodes("+");
